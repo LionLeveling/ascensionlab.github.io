@@ -1,5 +1,5 @@
-[index.html](https://github.com/user-attachments/files/33409296/index.html.html)
-# ascensionlab.github.io<!DOCTYPE html>
+[ASCENSION_LAB_CATALOGO_sin_barra_fija.html](https://github.com/user-attachments/files/33414694/ASCENSION_LAB_CATALOGO_sin_barra_fija.html)
+<!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -119,7 +119,7 @@
 <body class="min-h-screen flex flex-col justify-between selection:bg-brand-neon selection:text-brand-black">
 
     <!-- Top Bar & Header -->
-    <header class="sticky top-0 z-50 bg-brand-dark/95 backdrop-blur-md border-b border-brand-border">
+    <header class="relative z-10 bg-brand-dark border-b border-brand-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
             
             <!-- Brand Logo -->
