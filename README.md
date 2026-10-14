@@ -1,4 +1,4 @@
-[index.html.html](https://github.com/user-attachments/files/33409296/index.html.html)
+[index.html](https://github.com/user-attachments/files/33409296/index.html.html)
 # ascensionlab.github.io<!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
