@@ -1,5 +1,5 @@
-const CACHE_NAME = 'ascensum-lab-v3';
-const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './favicon.png', './favicon.ico', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
+const CACHE_NAME = 'ascensum-lab-v4';
+const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './favicon.png?v=4'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
 });
@@ -14,11 +14,10 @@ self.addEventListener('fetch', event => {
     event.respondWith(fetch(request).then(response => {
       if (response && response.ok) caches.open(CACHE_NAME).then(cache => cache.put('./index.html', response.clone()));
       return response;
-    }).catch(() => caches.match('./index.html').then(cached => cached || caches.match('./'))));
+    }).catch(() => caches.match('./index.html')));
     return;
   }
-  event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => {
-    if (response && response.ok) caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
-    return response;
-  })));
+  if (url.pathname.endsWith('/favicon.png')) {
+    event.respondWith(caches.match(request).then(cached => cached || fetch(request)));
+  }
 });
