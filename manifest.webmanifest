@@ -1,0 +1,21 @@
+{
+  "id": "./",
+  "name": "ASCENSUM LAB - Servicio Técnico Móvil",
+  "short_name": "ASCENSUM",
+  "description": "Catálogo de pantallas y servicios técnicos ASCENSUM LAB.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0e17",
+  "theme_color": "#0a0e17",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "./favicon.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
