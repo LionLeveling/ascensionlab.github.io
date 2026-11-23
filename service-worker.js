@@ -1,5 +1,5 @@
-const CACHE_NAME = 'ascensum-lab-v7';
-const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './favicon.png?v=5'];
+const CACHE_NAME = 'ascensum-lab-v8';
+const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './favicon.png?v=6', './icon-192.png?v=1', './icon-512.png?v=1', './apple-touch-icon.png?v=1'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
 });
