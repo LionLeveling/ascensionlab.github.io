@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ascensum-lab-v6';
+const CACHE_NAME = 'ascensum-lab-v7';
 const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './favicon.png?v=5'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
