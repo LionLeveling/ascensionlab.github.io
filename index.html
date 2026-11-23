@@ -214,9 +214,6 @@
 
     <!-- Presentación inicial oficial de ASCENSUM LAB -->
     <div id="ascensum-video-splash" role="status" aria-label="Presentación de ASCENSUM LAB">
-        <div class="splash-fallback" id="ascensum-splash-fallback" role="button" tabindex="0" aria-label="Tocar para reproducir la presentación">
-            <div><strong>ASCENSUM</strong><span>LAB</span><small>Toca para reproducir la presentación</small></div>
-        </div>
         <video id="ascensum-intro-video" autoplay muted playsinline webkit-playsinline preload="auto" aria-hidden="true">
             <source src="./ascensum-intro.mp4" type="video/mp4">
         </video>
@@ -798,57 +795,68 @@
 
 
     <script>
-      // Reproduce la presentación con respaldo visible si el video tarda o el navegador bloquea autoplay.
+      // Inicia automáticamente la presentación, sin pedir al usuario que toque la pantalla.
       (() => {
         const splash = document.getElementById('ascensum-video-splash');
         const video = document.getElementById('ascensum-intro-video');
         const skip = document.getElementById('ascensum-splash-skip');
-        const fallback = document.getElementById('ascensum-splash-fallback');
         if (!splash || !video) return;
         let closed = false;
+        let attempts = 0;
+        let retryTimer = null;
         const closeSplash = () => {
           if (closed) return;
           closed = true;
+          if (retryTimer) window.clearTimeout(retryTimer);
           try { video.pause(); } catch (_) {}
           splash.classList.add('is-hidden');
           window.setTimeout(() => splash.remove(), 750);
         };
         const startVideo = () => {
+          if (closed || !video.paused) return;
           video.muted = true;
           video.defaultMuted = true;
-          video.playsInline = true;
-          const attempt = video.play();
-          if (attempt && typeof attempt.catch === 'function') {
-            attempt.catch(error => {
-              // No dejamos una pantalla negra: el usuario puede tocar el respaldo para reintentar.
-              console.warn('La reproducción automática fue bloqueada; se ofrece reproducción manual.', error);
-            });
+          video.volume = 0;
+          video.setAttribute('muted', '');
+          video.setAttribute('playsinline', '');
+          video.setAttribute('webkit-playsinline', '');
+          attempts += 1;
+          try {
+            const attempt = video.play();
+            if (attempt && typeof attempt.catch === 'function') {
+              attempt.catch(error => {
+                console.warn('El navegador no permitió iniciar el video automáticamente.', error);
+                if (attempts < 8) {
+                  retryTimer = window.setTimeout(startVideo, 650);
+                } else {
+                  // Nunca dejamos un mensaje de “toca para reproducir”: entramos al catálogo.
+                  retryTimer = window.setTimeout(closeSplash, 900);
+                }
+              });
+            }
+          } catch (error) {
+            if (attempts < 8) retryTimer = window.setTimeout(startVideo, 650);
+            else retryTimer = window.setTimeout(closeSplash, 900);
           }
         };
-        const retryFromTap = () => startVideo();
         skip?.addEventListener('click', closeSplash);
-        fallback?.addEventListener('click', retryFromTap);
-        fallback?.addEventListener('keydown', event => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            retryFromTap();
-          }
-        });
         video.addEventListener('playing', () => splash.classList.add('video-ready'), { once: true });
         video.addEventListener('ended', closeSplash, { once: true });
         video.addEventListener('error', () => {
-          // Mantiene visible la identidad de marca y luego permite entrar al catálogo.
           console.warn('No se pudo cargar ascensum-intro.mp4.');
-          window.setTimeout(closeSplash, 1800);
+          closeSplash();
         }, { once: true });
-        // Respaldo para conexiones lentas: nunca se muestra un rectángulo negro vacío.
-        window.setTimeout(closeSplash, 12000);
-        if (video.readyState >= 2) startVideo();
-        else {
-          video.addEventListener('loadeddata', startVideo, { once: true });
-          video.addEventListener('canplay', startVideo, { once: true });
-          video.load();
-        }
+        video.addEventListener('loadeddata', startVideo);
+        video.addEventListener('canplay', startVideo);
+        window.addEventListener('pageshow', startVideo);
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden && video.paused) startVideo();
+        });
+        // Intento inmediato y reintentos al quedar listo el archivo de video.
+        startVideo();
+        if (video.readyState < 2) video.load();
+        // Límite de seguridad para conexiones lentas o políticas de reproducción del navegador.
+        window.setTimeout(() => { if (!closed && video.paused) closeSplash(); }, 12000);
       })();
     </script>
 
